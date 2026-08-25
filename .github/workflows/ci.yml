@@ -1,0 +1,72 @@
+name: CI
+
+# PR と push で検査とビルドを回し、main では続けて Cloudflare へデプロイする。
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    # 毎日 10:37 JST。自動マージ（GITHUB_TOKEN 経由）は main への push イベントを
+    # 発火させないため、Dependabot がマージした内容を取りこぼさないよう毎日 main を再デプロイする。
+    # 毎時ちょうどは GitHub 側の負荷が高く遅延・取りこぼしが起きるので、半端な時刻にしてある。
+    - cron: "37 1 * * *"
+
+concurrency:
+  group: ci-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    # このジョブ名がブランチ保護の必須チェック名になる。変えるときは設定も直すこと
+    name: check & build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: 型チェック・lint・配色の検査
+        run: pnpm check
+      - name: ビルド
+        run: pnpm build
+
+  deploy:
+    name: deploy to Cloudflare
+    needs: build
+    if: >-
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # schedule / workflow_dispatch でも必ず main を出す
+          ref: main
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: マイグレーションを当ててデプロイ
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::notice::CLOUDFLARE_API_TOKEN が未設定のためデプロイをスキップしました"
+            exit 0
+          fi
+          # スキーマとコードがずれないよう、デプロイの直前に必ず当てる
+          pnpm exec wrangler d1 migrations apply hidori --remote
+          pnpm run ship

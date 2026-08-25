@@ -29,18 +29,27 @@ export const MARK_LABEL: Record<Mark, { symbol: string; text: string }> = {
   no: { symbol: "×", text: "参加できない" },
 };
 
-/** 空文字は「未入力」として undefined に寄せる。フォームからは常に文字列が来るため */
-const optionalText = (max: number) =>
+/**
+ * 空文字は「未入力」として undefined に寄せる。フォームからは常に文字列が来るため。
+ *
+ * メッセージは必ず日本語で書く。zod の既定は英語（"Too big: expected string to have
+ * <=100 characters"）で、そのまま画面に出てしまう。実際に一度そうなった。
+ */
+const optionalText = (max: number, label: string) =>
   z
     .string()
     .trim()
-    .max(max)
+    .max(max, `${label}は ${max} 文字までです`)
     .transform((value) => (value === "" ? undefined : value))
     .optional();
 
 export const createEventSchema = z.object({
-  title: z.string().trim().min(1, "イベント名を入力してください").max(LIMITS.title),
-  note: optionalText(LIMITS.note),
+  title: z
+    .string()
+    .trim()
+    .min(1, "イベント名を入力してください")
+    .max(LIMITS.title, `イベント名は ${LIMITS.title} 文字までです`),
+  note: optionalText(LIMITS.note, "ひとこと"),
   /**
    * 候補日は1行1件のテキストで受け取る。カレンダー UI より先に、
    * 貼り付けで作れることを優先する（調整さんも同じ入力を持っている）。
@@ -57,18 +66,26 @@ export const createEventSchema = z.object({
     )
     .pipe(
       z
-        .array(z.string().max(LIMITS.candidateLabel))
+        .array(
+          z
+            .string()
+            .max(LIMITS.candidateLabel, `候補日の1行は ${LIMITS.candidateLabel} 文字までです`),
+        )
         .min(1, "候補日を1つ以上入力してください")
         .max(LIMITS.candidates, `候補日は ${LIMITS.candidates} 件までです`),
     ),
 });
 
 export const answerSchema = z.object({
-  eventId: z.string().min(1),
-  name: z.string().trim().min(1, "名前を入力してください").max(LIMITS.name),
-  comment: optionalText(LIMITS.comment),
+  eventId: z.string().min(1, "イベントが指定されていません"),
+  name: z
+    .string()
+    .trim()
+    .min(1, "名前を入力してください")
+    .max(LIMITS.name, `名前は ${LIMITS.name} 文字までです`),
+  comment: optionalText(LIMITS.comment, "ひとこと"),
   /** candidate id -> mark。キーは数値の文字列で来る */
-  marks: z.record(z.string(), z.enum(MARKS)),
+  marks: z.record(z.string(), z.enum(MARKS, "選べる回答は ○ △ × のいずれかです")),
 });
 
 export type CreateEventInput = z.infer<typeof createEventSchema>;

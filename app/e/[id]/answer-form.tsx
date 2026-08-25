@@ -19,6 +19,11 @@ type Props = {
 export function AnswerForm({ eventId, candidates, me }: Props) {
   const [state, action, pending] = useActionState<ActionState, FormData>(submitAnswer, null);
   const [removing, setRemoving] = useState(false);
+  // 未制御のままだと、送信後に React がフォームを初期化する。
+  // 検証で弾かれて戻ってきたときに、選んだ ○△× まで消えてしまう
+  const [name, setName] = useState(me?.name ?? "");
+  const [comment, setComment] = useState(me?.comment ?? "");
+  const [marks, setMarks] = useState<Record<string, Mark>>(me?.marks ?? {});
 
   return (
     <section aria-labelledby="answer-heading" className={styles.section}>
@@ -42,7 +47,8 @@ export function AnswerForm({ eventId, candidates, me }: Props) {
           name="name"
           required
           maxLength={LIMITS.name}
-          defaultValue={me?.name ?? ""}
+          value={name}
+          onChange={(event) => setName(event.target.value)}
           placeholder="表示される名前"
           className={styles.input}
         />
@@ -63,7 +69,10 @@ export function AnswerForm({ eventId, candidates, me }: Props) {
                         // 初期値を ○ にしない。何も選ばずに送るだけで賛成が水増しされるため、
                         // 候補ごとに必ず1つ選ばせる
                         required
-                        defaultChecked={me?.marks[String(candidate.id)] === mark}
+                        checked={marks[String(candidate.id)] === mark}
+                        onChange={() =>
+                          setMarks((current) => ({ ...current, [String(candidate.id)]: mark }))
+                        }
                         className={styles.radio}
                       />
                       <span className={`${styles.markFace} ${styles[mark]}`}>
@@ -85,7 +94,8 @@ export function AnswerForm({ eventId, candidates, me }: Props) {
           id="comment"
           name="comment"
           maxLength={LIMITS.comment}
-          defaultValue={me?.comment ?? ""}
+          value={comment}
+          onChange={(event) => setComment(event.target.value)}
           placeholder="例: 20時からなら行けます"
           className={styles.input}
         />
