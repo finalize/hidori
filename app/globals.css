@@ -1,11 +1,25 @@
 /*
+  Tailwind は shadcn の Calendar を動かすためだけに入れている。
+  画面そのものは CSS Modules で組んであり、Tailwind のユーティリティは使っていない。
+
+  preflight（要素の既定値をリセットするやつ）は読み込まない。
+  入れると素の h1 やリストの見た目が変わり、既存の画面が崩れるため。
+*/
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/*
   配色トークン。値は必ずリテラルな hex で書く。
   scripts/check-contrast.mjs が CSS をテキストとして読んで解析するので、
-  oklch() や color-mix()、var() の間接参照にすると黙って検査をすり抜ける。
+  oklch() や color-mix()、var() の間接参照にすると解析できない。
+  （shadcn の init は既定で oklch を書き込むうえ、--accent と --border を
+   自分の値で上書きしてくる。消してある）
 
-  既定は OS の設定（prefers-color-scheme）に従う。手動で切り替えたときだけ
-  Cookie に入れて data-theme で上書きする。インラインスクリプトを使わないので
-  ちらつきが出ない。
+  既定は OS の設定に従う。手動で切り替えたときだけ Cookie に入れて data-theme で上書きする。
+  インラインスクリプトを使わないのでちらつきが出ない。
 */
 
 :root {
@@ -55,6 +69,60 @@
   --maybe: #e0b355;
   --no: #ff8a80;
   --border: #38434a;
+}
+
+/*
+  この @custom-variant はパレットの定義より後ろに置くこと。
+  前に置くと、中の `:root:not([data-theme="light"])` という文字列を
+  check-contrast.mjs が先に拾ってしまう（セレクタを indexOf で探しているため）。
+  実際に一度、ダークの検査が空振りして誤検知になった。
+*/
+/*
+  shadcn の既定のダーク判定は .dark クラスだが、hidori は
+  OS 設定（prefers-color-scheme）と data-theme の2本立てなので、そちらに合わせる。
+  色そのものは下の CSS 変数が切り替わるので、この変種が効くのは
+  ホバーや入力エラーの微調整だけ。
+*/
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) {
+      @slot;
+    }
+  }
+}
+
+
+/*
+  shadcn のコンポーネントが使う名前を、hidori のトークンに向ける。
+  shadcn が用意する --background / --primary などの変数そのものは作らない。
+  作ると値が二重になり、片方だけ直したときにカレンダーだけ色が違う、という事故になる。
+  ここを通すので、カレンダーは自動的にこのサイトの配色とテーマ切替に従う。
+*/
+@theme inline {
+  --color-background: var(--surface);
+  --color-foreground: var(--fg);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--fg);
+  --color-popover: var(--surface);
+  --color-popover-foreground: var(--fg);
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--accent-fg);
+  --color-secondary: var(--surface-2);
+  --color-secondary-foreground: var(--fg);
+  --color-muted: var(--surface-2);
+  --color-muted-foreground: var(--fg-dim);
+  /* shadcn の accent は「淡い強調の背景」で、hidori の --accent（ブランド色）とは別物 */
+  --color-accent: var(--surface-2);
+  --color-accent-foreground: var(--fg);
+  --color-destructive: var(--no);
+  --color-border: var(--border);
+  --color-input: var(--border);
+  --color-ring: var(--accent);
+  --radius-md: 8px;
+  --radius-lg: 12px;
 }
 
 *,

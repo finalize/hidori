@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { addCandidates, deleteEvent } from "../../../actions";
 import { LIMITS, type ActionState } from "../../../../lib/schema";
+import { CandidatePicker, type CandidateDraft } from "@/components/candidate-picker";
 import styles from "./manage.module.css";
 
 export function ManagePanel({
@@ -19,6 +20,7 @@ export function ManagePanel({
 }) {
   const [state, action, pending] = useActionState<ActionState, FormData>(addCandidates, null);
   const [confirming, setConfirming] = useState(false);
+  const [additions, setAdditions] = useState<CandidateDraft[]>([]);
 
   return (
     <>
@@ -26,13 +28,11 @@ export function ManagePanel({
         <h2 className={styles.h2}>候補日を足す</h2>
         <form action={action} className={styles.form}>
           <input type="hidden" name="eventId" value={eventId} />
-          <textarea
+          <CandidatePicker
             name="candidates"
-            rows={4}
-            required
-            aria-label="足す候補日（1行に1つ）"
-            placeholder={"12/23(月) 19:00\n12/24(火) 19:00"}
-            className={styles.textarea}
+            value={additions}
+            onChange={setAdditions}
+            alreadyUsed={candidateCount}
           />
           <p className={styles.hint}>
             いま {candidateCount} 件です。合わせて {LIMITS.candidates} 件までです。
@@ -47,7 +47,11 @@ export function ManagePanel({
               追加しました。
             </p>
           )}
-          <button type="submit" disabled={pending} className={styles.primary}>
+          <button
+            type="submit"
+            disabled={pending || additions.length === 0}
+            className={styles.primary}
+          >
             {pending ? "追加中…" : "候補を足す"}
           </button>
         </form>

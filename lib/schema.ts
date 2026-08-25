@@ -10,7 +10,6 @@ import { z } from "zod";
 export const LIMITS = {
   title: 100,
   note: 500,
-  candidateLabel: 60,
   candidates: 50,
   name: 40,
   comment: 200,
@@ -43,6 +42,35 @@ const optionalText = (max: number, label: string) =>
     .transform((value) => (value === "" ? undefined : value))
     .optional();
 
+/** カレンダーが送ってくる1件。表示用の文字列はサーバ側で組み立てる */
+export const candidateSchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "日付の形式が正しくありません"),
+  time: z.string().regex(/^\d{2}:\d{2}$/, "時刻の形式が正しくありません"),
+});
+
+export type CandidateInput = z.infer<typeof candidateSchema>;
+
+/**
+ * 候補日はカレンダーで選んだものを JSON 1本で受け取る。
+ * 日付ごとに name を増やすより、検証がここ1か所で済む。
+ */
+const candidatesField = z
+  .string()
+  .transform((value, ctx) => {
+    try {
+      return JSON.parse(value) as unknown;
+    } catch {
+      ctx.addIssue({ code: "custom", message: "候補日を読み取れませんでした" });
+      return z.NEVER;
+    }
+  })
+  .pipe(
+    z
+      .array(candidateSchema)
+      .min(1, "候補日を1つ以上選んでください")
+      .max(LIMITS.candidates, `候補日は ${LIMITS.candidates} 件までです`),
+  );
+
 export const createEventSchema = z.object({
   title: z
     .string()
@@ -50,30 +78,7 @@ export const createEventSchema = z.object({
     .min(1, "イベント名を入力してください")
     .max(LIMITS.title, `イベント名は ${LIMITS.title} 文字までです`),
   note: optionalText(LIMITS.note, "ひとこと"),
-  /**
-   * 候補日は1行1件のテキストで受け取る。カレンダー UI より先に、
-   * 貼り付けで作れることを優先する（調整さんも同じ入力を持っている）。
-   */
-  candidates: z
-    .string()
-    .trim()
-    .min(1, "候補日を1つ以上入力してください")
-    .transform((value) =>
-      value
-        .split("\n")
-        .map((line) => line.trim())
-        .filter((line) => line !== ""),
-    )
-    .pipe(
-      z
-        .array(
-          z
-            .string()
-            .max(LIMITS.candidateLabel, `候補日の1行は ${LIMITS.candidateLabel} 文字までです`),
-        )
-        .min(1, "候補日を1つ以上入力してください")
-        .max(LIMITS.candidates, `候補日は ${LIMITS.candidates} 件までです`),
-    ),
+  candidates: candidatesField,
 });
 
 export const answerSchema = z.object({

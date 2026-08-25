@@ -20,7 +20,10 @@ const SECURITY_HEADERS = [
       // 実測: 'self' だけにするとインラインスクリプトが7件ブロックされ、
       // React が #412（ハイドレーション失敗）で落ちた。
       // 残りのディレクティブは絞ったままにしてある。
-      "script-src 'self' 'unsafe-inline'",
+      //
+      // 'unsafe-eval' は開発時だけ。React は開発モードで eval を使うので、
+      // 無いと next dev でエラーが出る。本番のバンドルには要らない。
+      `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "production" ? "" : " 'unsafe-eval'"}`,
       // CSS Modules は外部ファイルだが、Next が一部のスタイルをインラインで出す
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data:",

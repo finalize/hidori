@@ -1,0 +1,56 @@
+.picker { display: grid; gap: 0.75rem; }
+
+.calendar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  /* 狭い画面でカレンダーが枠からはみ出さないように */
+  max-width: 100%;
+  /*
+    shadcn の既定は 1.75rem（28px）で、指で押すには小さい。
+    Tailwind のユーティリティは @layer utilities に入っており、
+    レイヤーに属さないこの指定のほうが強いので、そのまま上書きできる。
+  */
+  --cell-size: 2.5rem;
+}
+
+/* 候補日は複数選ぶので、カレンダーは目立つ位置に置いて押しやすくする */
+@media (min-width: 30rem) {
+  .calendar {
+    --cell-size: 2.75rem;
+  }
+}
+
+.empty { margin: 0; color: var(--fg-dim); font-size: 0.9375rem; }
+
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem; }
+
+.row {
+  display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+  padding: 0.45rem 0.6rem;
+  background: var(--surface-2);
+  border-radius: 8px;
+}
+
+.day { font-weight: 600; min-width: 6.5em; }
+.timeLabel { display: inline-flex; }
+
+.time {
+  padding: 0.4rem 0.5rem;
+  background: var(--surface);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font: inherit; font-size: 1rem;
+}
+
+.remove {
+  margin-left: auto;
+  padding: 0.35rem 0.7rem;
+  background: none; color: var(--fg-dim);
+  border: 1px solid var(--border); border-radius: 6px;
+  font: inherit; font-size: 0.875rem; cursor: pointer;
+}
+.remove:hover { color: var(--no); border-color: var(--no); }
+
+.hint { margin: 0; color: var(--fg-dim); font-size: 0.875rem; }
