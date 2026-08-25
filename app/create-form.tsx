@@ -3,18 +3,19 @@
 import { useActionState, useState } from "react";
 import { createEvent } from "./actions";
 import { LIMITS, type ActionState } from "../lib/schema";
+import { CandidatePicker, type CandidateDraft } from "@/components/candidate-picker";
 import styles from "./form.module.css";
 
 /**
- * 候補日はカレンダー UI ではなく1行1件のテキストで受け取る。
- * チャットから貼り付けてそのまま作れるほうが速い、という判断。
+ * 候補日はカレンダーから選ぶ（shadcn の Calendar）。
+ * 選んだ日ごとに時刻を決められる。
  */
 export function CreateForm() {
   const [state, action, pending] = useActionState<ActionState, FormData>(createEvent, null);
   // 入力は制御する。未制御のままだと、送信後に React がフォームを初期化するので、
   // 検証で弾かれて戻ってきたときに書いた内容が消える
   const [title, setTitle] = useState("");
-  const [candidates, setCandidates] = useState("");
+  const [candidates, setCandidates] = useState<CandidateDraft[]>([]);
   const [note, setNote] = useState("");
 
   return (
@@ -33,22 +34,8 @@ export function CreateForm() {
         className={styles.input}
       />
 
-      <label className={styles.label} htmlFor="candidates">
-        候補日（1行に1つ）
-      </label>
-      <textarea
-        id="candidates"
-        name="candidates"
-        required
-        rows={6}
-        value={candidates}
-        onChange={(event) => setCandidates(event.target.value)}
-        placeholder={"12/20(金) 19:00\n12/21(土) 18:00\n12/22(日) 18:00"}
-        className={styles.textarea}
-      />
-      <p className={styles.hint}>
-        書いたとおりに表示されます。{LIMITS.candidates} 件までです。
-      </p>
+      <span className={styles.label}>候補日</span>
+      <CandidatePicker name="candidates" value={candidates} onChange={setCandidates} />
 
       <label className={styles.label} htmlFor="note">
         ひとこと（任意）
@@ -70,7 +57,11 @@ export function CreateForm() {
         </p>
       )}
 
-      <button type="submit" disabled={pending} className={styles.primary}>
+      <button
+        type="submit"
+        disabled={pending || candidates.length === 0}
+        className={styles.primary}
+      >
         {pending ? "作成中…" : "出欠表をつくる"}
       </button>
     </form>

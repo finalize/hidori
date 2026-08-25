@@ -70,12 +70,28 @@ migrations/            手書きの SQL
 
 - **色はリテラルな hex で書く。** `scripts/check-contrast.mjs`（自作の contrast-kit を使用）が
   CSS をテキストとして読むので、`oklch()` / `color-mix()` / `var()` の間接参照は解決できない。
-  破ると落ちるのではなく**黙って検査をすり抜ける**。
-- **Tailwind を入れない。** `@theme` のトークン参照も同じ理由で読めない。
 - `:root` はファイル中で最初に現れる `:root` である必要がある（セレクタを `indexOf` で探しているため）。
+  **`:root:not([data-theme="light"])` を含む文字列をパレットより前に書かないこと。**
+  `@custom-variant dark` を先頭に置いたら、検査がその中身を拾って誤検知した。
 - ダークの値は2か所（`prefers-color-scheme` 側と `data-theme="dark"` 側）にある。
   検査スクリプトが両者の一致も見ているので、片方だけ直すと CI が落ちる。
 - テーマはインラインスクリプトを使わず Cookie で解決する。ちらつきが出ない。
+
+## Tailwind と shadcn（カレンダーのためだけに入っている）
+
+画面は CSS Modules で組んでいる。Tailwind のユーティリティを普段使いしない。
+
+- **preflight を読み込まない。** `@import "tailwindcss"` ではなく `theme.css` と `utilities.css` を
+  個別に読んでいる。preflight を入れると素の `h1` やリストの見た目が変わり、既存の画面が崩れる。
+  ただし `shadcn` の CLI はこの書き方を Tailwind 未導入と誤判定する。
+  コンポーネントを追加するときは、一時的に `@import "tailwindcss";` に戻してから実行する。
+- **`shadcn init` は `:root` に自分のトークンを oklch で書き込み、`--accent` と `--border` を
+  上書きしてくる。** 受け入れてはいけない。shadcn 側の変数（`--background` / `--primary` など）は作らず、
+  `@theme inline` の `--color-*` を hidori のトークンへ向けること。二重に値を持つと、
+  片方だけ直したときにカレンダーだけ色が違う、という壊れ方をする。
+- `shadcn init` は `next/font/google` をレイアウトに足してくる。**Web フォントは使わない**ので消す。
+- カレンダーのマスの大きさは `--cell-size`。shadcn の既定 1.75rem は指で押すには小さいので広げてある。
+  Tailwind のユーティリティは `@layer utilities` にあり、レイヤーに属さない CSS Modules のほうが強い。
 
 ## 幅による切り替え
 
@@ -88,6 +104,8 @@ migrations/            手書きの SQL
 - `"use server"` のファイルは**async 関数しか export できない**。定数を再 export するとビルドが落ちる。
 - `middleware` は `proxy` に改名され、nodejs ランタイム専用になった。**OpenNext は未対応**なので使えない。
 - そのため CSP の nonce が配れない。`script-src` だけ `'unsafe-inline'` にしてある（`next.config.ts` に理由を記載）。
+  **`'unsafe-eval'` は開発時だけ付ける。** React が開発モードで eval を使うので、無いと `next dev` で
+  コンソールにエラーが出る。本番のバンドルには要らない。
 - `params` / `searchParams` / `cookies()` は Promise。型は `pnpm exec next typegen` が生成するので、
   `tsc` より先に走らせる（`pnpm check` がその順序になっている）。
 - **フォームは制御する。** 未制御だと送信後に React が初期化するので、検証で弾かれると入力が消える。

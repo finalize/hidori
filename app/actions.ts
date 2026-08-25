@@ -7,7 +7,15 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { db, touchEvent, type ParticipantRow } from "../lib/db";
 import { newEventId, newToken, tokenEquals } from "../lib/id";
 import { adminCookie, editCookie, TOKEN_COOKIE_OPTIONS } from "../lib/tokens";
-import { answerSchema, createEventSchema, LIMITS, type ActionState } from "../lib/schema";
+import {
+  answerSchema,
+  candidateSchema,
+  createEventSchema,
+  LIMITS,
+  type ActionState,
+} from "../lib/schema";
+import { formatCandidateLabel, toStartsAt } from "../lib/dates";
+import { z } from "zod";
 import { THEME_COOKIE, THEME_COOKIE_OPTIONS } from "../lib/theme";
 import { origin } from "../lib/origin";
 
@@ -24,6 +32,15 @@ async function underLimit(which: "CREATE_LIMIT" | "WRITE_LIMIT"): Promise<boolea
   const ip = (await headers()).get("CF-Connecting-IP") ?? "unknown";
   const { success } = await limiter.limit({ key: `${which}:${ip}` });
   return success;
+}
+
+/** 壊れた JSON が来ても例外にしない。検証は zod 側で行う */
+function safeJson(value: string): unknown {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return undefined;
+  }
 }
 
 export async function createEvent(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -52,10 +69,19 @@ export async function createEvent(_prev: ActionState, formData: FormData): Promi
          VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))`,
       )
       .bind(id, title, note ?? null, adminToken),
-    ...candidates.map((label, index) =>
+    // 表示用の文字列と並べ替え用の値はサーバで作る。
+    // 曜日の付け方を1か所に閉じ込めておきたいのと、クライアントの文字列を信用しないため
+    ...candidates.map((candidate, index) =>
       database
-        .prepare("INSERT INTO candidates (event_id, label, position) VALUES (?, ?, ?)")
-        .bind(id, label, index),
+        .prepare(
+          "INSERT INTO candidates (event_id, label, starts_at, position) VALUES (?, ?, ?, ?)",
+        )
+        .bind(
+          id,
+          formatCandidateLabel(candidate.date, candidate.time),
+          toStartsAt(candidate.date, candidate.time),
+          index,
+        ),
     ),
   ]);
 
@@ -239,27 +265,37 @@ export async function addCandidates(_prev: ActionState, formData: FormData): Pro
     return { error: "候補を追加する権限がありません。" };
   }
 
-  const labels = String(formData.get("candidates") ?? "")
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line !== "" && line.length <= LIMITS.candidateLabel);
-  if (labels.length === 0) return { error: "候補日を入力してください。" };
+  const parsed = z
+    .array(candidateSchema)
+    .min(1, "候補日を1つ以上選んでください")
+    .safeParse(safeJson(String(formData.get("candidates") ?? "")));
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "候補日を選んでください。" };
+  }
+  const additions = parsed.data;
 
   const existing = await database
     .prepare("SELECT COUNT(*) AS n, MAX(position) AS last FROM candidates WHERE event_id = ?")
     .bind(eventId)
     .all<{ n: number; last: number | null }>();
   const current = existing.results[0]?.n ?? 0;
-  if (current + labels.length > LIMITS.candidates) {
+  if (current + additions.length > LIMITS.candidates) {
     return { error: `候補日は合わせて ${LIMITS.candidates} 件までです。` };
   }
   const start = (existing.results[0]?.last ?? -1) + 1;
 
   await database.batch([
-    ...labels.map((label, index) =>
+    ...additions.map((candidate, index) =>
       database
-        .prepare("INSERT INTO candidates (event_id, label, position) VALUES (?, ?, ?)")
-        .bind(eventId, label, start + index),
+        .prepare(
+          "INSERT INTO candidates (event_id, label, starts_at, position) VALUES (?, ?, ?, ?)",
+        )
+        .bind(
+          eventId,
+          formatCandidateLabel(candidate.date, candidate.time),
+          toStartsAt(candidate.date, candidate.time),
+          start + index,
+        ),
     ),
     touchEvent(database, eventId),
   ]);
