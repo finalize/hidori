@@ -14,7 +14,33 @@
   --cell-size: 2.5rem;
 }
 
-/* 候補日は複数選ぶので、カレンダーは目立つ位置に置いて押しやすくする */
+/*
+  幅を親（フォームの枠）いっぱいに広げる。
+
+  shadcn の既定は root が w-fit で、マスが aspect-square。
+  そのまま横に伸ばすと1マスが巨大な正方形になり、カレンダーが縦に間延びする。
+  なので「横は7等分・縦は --cell-size」に変える。
+
+  Tailwind のユーティリティは @layer utilities に入っており、
+  レイヤーに属さないこの指定のほうが強いので、!important は要らない。
+*/
+.calendar {
+  width: 100%;
+}
+
+.calendar td {
+  aspect-ratio: auto;
+  height: var(--cell-size);
+}
+
+/* マスの中のボタンも同じく正方形指定を外す */
+.calendar td button {
+  aspect-ratio: auto;
+  height: 100%;
+  min-width: 0;
+}
+
+/* 候補日は複数選ぶので、行の高さは指で押せるぶんを確保する */
 @media (min-width: 30rem) {
   .calendar {
     --cell-size: 2.75rem;
