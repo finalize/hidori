@@ -60,7 +60,10 @@ export function AnswerForm({ eventId, candidates, me }: Props) {
                         type="radio"
                         name={`mark_${candidate.id}`}
                         value={mark}
-                        defaultChecked={(me?.marks[String(candidate.id)] ?? "yes") === mark}
+                        // 初期値を ○ にしない。何も選ばずに送るだけで賛成が水増しされるため、
+                        // 候補ごとに必ず1つ選ばせる
+                        required
+                        defaultChecked={me?.marks[String(candidate.id)] === mark}
                         className={styles.radio}
                       />
                       <span className={`${styles.markFace} ${styles[mark]}`}>
@@ -93,9 +96,24 @@ export function AnswerForm({ eventId, candidates, me }: Props) {
           </p>
         )}
         {state && "ok" in state && (
-          <p role="status" className={styles.ok}>
-            保存しました。
-          </p>
+          <div role="status" className={styles.ok}>
+            <p className={styles.okLine}>保存しました。</p>
+            {state.editUrl && (
+              <>
+                <p className={styles.okLine}>
+                  別の端末から自分の回答を直すには、このリンクを自分宛てに控えておいてください。
+                  <strong>この画面を離れると二度と出ません。</strong>
+                </p>
+                <input
+                  readOnly
+                  value={state.editUrl}
+                  aria-label="自分の回答を直すためのリンク"
+                  onFocus={(event) => event.currentTarget.select()}
+                  className={styles.editUrl}
+                />
+              </>
+            )}
+          </div>
         )}
 
         <button type="submit" disabled={pending} className={styles.primary}>

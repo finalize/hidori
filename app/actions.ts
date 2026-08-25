@@ -9,6 +9,7 @@ import { newEventId, newToken, tokenEquals } from "../lib/id";
 import { adminCookie, editCookie, TOKEN_COOKIE_OPTIONS } from "../lib/tokens";
 import { answerSchema, createEventSchema, LIMITS, type ActionState } from "../lib/schema";
 import { THEME_COOKIE, THEME_COOKIE_OPTIONS } from "../lib/theme";
+import { origin } from "../lib/origin";
 
 /**
  * レート制限。誰でも作成できる公開ツールなので、連打と自動化に上限を設ける。
@@ -104,6 +105,7 @@ export async function submitAnswer(_prev: ActionState, formData: FormData): Prom
 
   // 既に自分の行があるなら更新、無ければ追加
   let participant: ParticipantRow | undefined;
+  let newEditUrl: string | undefined;
   if (myToken) {
     const found = await database
       .prepare("SELECT * FROM participants WHERE event_id = ? AND edit_token = ?")
@@ -135,6 +137,8 @@ export async function submitAnswer(_prev: ActionState, formData: FormData): Prom
 
     // この Cookie が「自分の行を直せる」根拠になる
     jar.set(editCookie(eventId), editToken, TOKEN_COOKIE_OPTIONS(eventId));
+    // 別の端末から直したいとき用のリンク。本人にだけ、初回に一度だけ見せる
+    newEditUrl = `${await origin()}/e/${eventId}/claim?t=${editToken}`;
   } else {
     await database
       .prepare(
@@ -157,7 +161,7 @@ export async function submitAnswer(_prev: ActionState, formData: FormData): Prom
   ]);
 
   revalidatePath(`/e/${eventId}`);
-  return { ok: true };
+  return newEditUrl ? { ok: true, editUrl: newEditUrl } : { ok: true };
 }
 
 /** 自分の行だけを消す。他人の行は Cookie のトークンが合わないので消せない */

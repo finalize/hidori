@@ -28,19 +28,26 @@ export async function purgeExpired(db: D1Database, retentionDays = RETENTION_DAY
   const ids = expired.results.map((row) => row.id);
   if (ids.length === 0) return { events: 0 };
 
-  // D1 のプレースホルダは配列を展開しないので、件数ぶん並べる
-  const marks = ids.map(() => "?").join(",");
-  await db.batch([
-    db
-      .prepare(
-        `DELETE FROM answers WHERE participant_id IN
-           (SELECT id FROM participants WHERE event_id IN (${marks}))`,
-      )
-      .bind(...ids),
-    db.prepare(`DELETE FROM participants WHERE event_id IN (${marks})`).bind(...ids),
-    db.prepare(`DELETE FROM candidates WHERE event_id IN (${marks})`).bind(...ids),
-    db.prepare(`DELETE FROM events WHERE id IN (${marks})`).bind(...ids),
-  ]);
+  // D1 は1文の bind パラメータに上限（100）がある。
+  // まとめて消そうとすると、対象が増えたときにちょうど失敗する ＝
+  // 掃除がいちばん必要な場面で動かなくなるので、分割して流す。
+  const CHUNK = 50;
+  for (let start = 0; start < ids.length; start += CHUNK) {
+    const chunk = ids.slice(start, start + CHUNK);
+    // D1 のプレースホルダは配列を展開しないので、件数ぶん並べる
+    const marks = chunk.map(() => "?").join(",");
+    await db.batch([
+      db
+        .prepare(
+          `DELETE FROM answers WHERE participant_id IN
+             (SELECT id FROM participants WHERE event_id IN (${marks}))`,
+        )
+        .bind(...chunk),
+      db.prepare(`DELETE FROM participants WHERE event_id IN (${marks})`).bind(...chunk),
+      db.prepare(`DELETE FROM candidates WHERE event_id IN (${marks})`).bind(...chunk),
+      db.prepare(`DELETE FROM events WHERE id IN (${marks})`).bind(...chunk),
+    ]);
+  }
 
   return { events: ids.length };
 }

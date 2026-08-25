@@ -74,5 +74,8 @@ export const answerSchema = z.object({
 export type CreateEventInput = z.infer<typeof createEventSchema>;
 export type AnswerInput = z.infer<typeof answerSchema>;
 
-/** Server Action がフォームに返す形。useActionState でそのまま使う */
-export type ActionState = { error: string } | { ok: true } | null;
+/**
+ * Server Action がフォームに返す形。useActionState でそのまま使う。
+ * editUrl は初回回答のときだけ入る（別の端末から自分の回答を直すためのリンク）。
+ */
+export type ActionState = { error: string } | { ok: true; editUrl?: string } | null;
