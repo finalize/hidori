@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hidori",
+  // OpenNext が生成した fetch ハンドラを custom-worker.ts が包み、scheduled を足している
+  "main": "custom-worker.ts",
+  "compatibility_date": "2026-08-25",
+  // nodejs_compat は OpenNext の必須要件。global_fetch_strictly_public は
+  // Worker 自身への fetch を公開インターネット経由にする（OpenNext の推奨設定）
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "hidori",
+      // 識別子であって秘密ではない。書き込むには CLOUDFLARE_API_TOKEN が要る。
+      // ローカル（--local）では使われない
+      "database_id": "e4776e2f-4dc2-4550-8c24-2a3fa7364c0f",
+      "migrations_dir": "migrations"
+    }
+  ],
+  // 作成と回答の連打よけ。period は 10 か 60 秒しか指定できないのでバースト対策に使う
+  "ratelimits": [
+    { "name": "CREATE_LIMIT", "namespace_id": "1001", "simple": { "limit": 5, "period": 60 } },
+    { "name": "WRITE_LIMIT", "namespace_id": "1002", "simple": { "limit": 30, "period": 60 } }
+  ],
+  // 保存期間を過ぎたイベントを消す。02:30 UTC = 11:30 JST。毎時ちょうどは避ける
+  "triggers": { "crons": ["30 2 * * *"] }
+}

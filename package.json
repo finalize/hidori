@@ -6,20 +6,34 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check": "tsc --noEmit && eslint && node scripts/check-contrast.mjs",
+    "check:contrast": "node scripts/check-contrast.mjs",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "ship": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "db:local": "wrangler d1 migrations apply hidori --local",
+    "db:remote": "wrangler d1 migrations apply hidori --remote",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
+    "@opennextjs/cloudflare": "^1.20.2",
     "next": "16.3.2",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "contrast-kit": "^0.3.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.125.0"
   },
-  "packageManager": "pnpm@10.30.1"
+  "packageManager": "pnpm@10.30.1",
+  "engines": {
+    "node": ">=22.12.0"
+  }
 }
