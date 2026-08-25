@@ -91,7 +91,14 @@ migrations/            手書きの SQL
   片方だけ直したときにカレンダーだけ色が違う、という壊れ方をする。
 - `shadcn init` は `next/font/google` をレイアウトに足してくる。**Web フォントは使わない**ので消す。
 - カレンダーのマスの大きさは `--cell-size`。shadcn の既定 1.75rem は指で押すには小さいので広げてある。
-  Tailwind のユーティリティは `@layer utilities` にあり、レイヤーに属さない CSS Modules のほうが強い。
+  幅は親いっぱい（`w-fit` と `aspect-square` を打ち消してある）。
+- **レイヤーの強さに注意。** Tailwind のユーティリティは `@layer utilities` にあり、
+  レイヤーに属さない CSS はそれより**強い**。上書きしたいときは便利だが、意図せず効きすぎる。
+  素の要素に当てる打ち消し（`button { background-color: transparent }` など）は
+  必ず `@layer base` の中に置くこと。外に書いたら、選択中の日の `bg-primary` まで消えて
+  白地に白文字になった。
+- preflight を読み込んでいないので、ボタンにブラウザ既定の灰色の背景が残る。
+  `@layer base` で透明にしてある。自前のボタンはすべて背景を明示しているので影響しない。
 
 ## 幅による切り替え
 
