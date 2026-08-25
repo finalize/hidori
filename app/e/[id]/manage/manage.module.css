@@ -1,0 +1,50 @@
+.block {
+  margin-top: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.1rem 1.1rem;
+}
+.h2 { font-size: 1.05rem; margin: 0 0 0.6rem; }
+.form { display: grid; gap: 0.35rem; }
+.textarea, .handover {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  background: var(--surface-2);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font: inherit; font-size: 1rem;
+}
+.textarea { resize: vertical; line-height: 1.6; }
+.hint { margin: 0.15rem 0 0.5rem; color: var(--fg-dim); font-size: 0.875rem; }
+.error {
+  margin: 0.5rem 0 0; padding: 0.6rem 0.75rem;
+  background: var(--surface-2); border-left: 3px solid var(--no);
+  border-radius: 4px; color: var(--no);
+}
+.ok {
+  margin: 0.5rem 0 0; padding: 0.6rem 0.75rem;
+  background: var(--surface-2); border-left: 3px solid var(--yes);
+  border-radius: 4px; color: var(--yes);
+}
+.primary {
+  margin-top: 0.6rem; padding: 0.7rem 1rem;
+  background: var(--accent); color: var(--accent-fg);
+  border: 0; border-radius: 8px;
+  font: inherit; font-weight: 600; cursor: pointer;
+}
+.primary:disabled { opacity: 0.6; cursor: progress; }
+.confirmRow { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.danger {
+  padding: 0.7rem 1rem;
+  background: none; color: var(--no);
+  border: 1px solid var(--no); border-radius: 8px;
+  font: inherit; font-weight: 600; cursor: pointer;
+}
+.cancel {
+  padding: 0.7rem 1rem;
+  background: none; color: var(--fg);
+  border: 1px solid var(--border); border-radius: 8px;
+  font: inherit; cursor: pointer;
+}

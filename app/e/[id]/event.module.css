@@ -1,0 +1,118 @@
+.header { margin: 1rem 0 1.25rem; }
+.title { margin: 0; font-size: 1.6rem; }
+.note { margin: 0.4rem 0 0; color: var(--fg-dim); white-space: pre-wrap; }
+
+.h2 { font-size: 1.05rem; margin: 1.75rem 0 0.6rem; }
+
+.share {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.9rem 1rem 1rem;
+}
+.share .h2 { margin-top: 0; }
+.shareRow { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.shareInput {
+  flex: 1 1 16rem;
+  min-width: 0;
+  padding: 0.55rem 0.65rem;
+  background: var(--surface-2);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 1rem;
+}
+.copy {
+  padding: 0.55rem 1rem;
+  background: var(--accent);
+  color: var(--accent-fg);
+  border: 0; border-radius: 8px;
+  font: inherit; font-weight: 600; cursor: pointer;
+}
+.adminNote { margin: 0.7rem 0 0; color: var(--fg-dim); font-size: 0.875rem; }
+
+.empty { color: var(--fg-dim); }
+
+/* --- 広い画面: 表 --- */
+.tableScroll {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.table { border-collapse: separate; border-spacing: 0; width: 100%; }
+.table th, .table td { padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--border); }
+
+/* 候補日の列と見出しの行を固定する。参加者が増えても候補日を見失わない */
+.stickyCorner, .stickyCell {
+  position: sticky; left: 0; z-index: 1;
+  background: var(--surface-2);
+  text-align: left; white-space: nowrap;
+}
+.stickyCorner { top: 0; z-index: 2; }
+.nameHead, .countHead {
+  position: sticky; top: 0;
+  background: var(--surface-2);
+  color: var(--fg-dim); font-weight: 600; white-space: nowrap;
+}
+.countHead { text-align: center; }
+.nameHead { text-align: center; }
+
+.count { text-align: center; color: var(--fg-dim); font-variant-numeric: tabular-nums; }
+.cell { text-align: center; }
+.blank { color: var(--fg-dim); }
+
+.bestRow .stickyCell { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--accent); }
+.badge {
+  margin-left: 0.5rem; padding: 0.05rem 0.4rem;
+  background: var(--accent); color: var(--accent-fg);
+  border-radius: 999px; font-size: 0.75rem; font-weight: 700;
+}
+
+.yes { color: var(--yes); font-weight: 700; }
+.maybe { color: var(--maybe); font-weight: 700; }
+.no { color: var(--no); font-weight: 700; }
+
+/* --- 狭い画面: 候補ごとのカード。集計を主役にする --- */
+.cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.75rem 0.9rem;
+}
+.bestCard { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+.cardHead { display: flex; align-items: center; gap: 0.25rem; flex-wrap: wrap; }
+.cardLabel { font-weight: 600; }
+.cardCounts { display: flex; gap: 1rem; margin-top: 0.35rem; font-variant-numeric: tabular-nums; }
+.details { margin-top: 0.5rem; }
+.details summary { color: var(--fg-dim); font-size: 0.875rem; cursor: pointer; }
+.who { list-style: none; margin: 0.4rem 0 0; padding: 0; display: grid; gap: 0.15rem; }
+
+.comments { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.comments li {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+}
+.commentName { display: block; font-weight: 600; font-size: 0.875rem; color: var(--fg-dim); }
+.commentBody { white-space: pre-wrap; }
+
+.footer { margin-top: 3rem; color: var(--fg-dim); font-size: 0.875rem; }
+.footer p { margin: 0.3rem 0; }
+
+/*
+  表とカードの切り替え。
+  この指定はファイルの最後に置く。途中に書くと、あとから出てくる
+  .cards { display: grid } のような同じ詳細度の指定に上書きされて、
+  広い画面で表とカードが両方出る（実際に一度そうなった）。
+*/
+.tableScroll { display: none; }
+
+@media (min-width: 46rem) {
+  .tableScroll { display: block; }
+  .cards { display: none; }
+}

@@ -1,0 +1,90 @@
+.section { margin-top: 2.5rem; }
+.h2 { font-size: 1.05rem; margin: 0 0 0.6rem; }
+.mine { margin: 0 0 0.75rem; color: var(--fg-dim); font-size: 0.9375rem; }
+.mine strong { color: var(--fg); }
+
+.form {
+  display: grid; gap: 0.35rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.1rem;
+}
+
+.label { font-weight: 600; margin-top: 0.9rem; }
+.label:first-of-type { margin-top: 0; }
+
+.input {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  background: var(--surface);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font: inherit; font-size: 1rem;
+}
+
+.fieldset { margin: 1.1rem 0 0; padding: 0; border: 0; min-width: 0; }
+.legend { font-weight: 600; padding: 0; }
+
+.candidates { list-style: none; margin: 0.5rem 0 0; padding: 0; display: grid; gap: 0.5rem; }
+.candidate {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 0.75rem; flex-wrap: wrap;
+  padding: 0.5rem 0.6rem;
+  background: var(--surface-2);
+  border-radius: 10px;
+}
+.candidateLabel { font-weight: 600; }
+
+.marks { display: flex; gap: 0.35rem; }
+/* 見た目は隣の span に出すが、input は 0x0 に潰さずボタン全体を覆わせる。
+   そうしないと「ラベル経由でしか押せない」当たり判定になり、
+   支援技術やポインタ以外の操作で扱いにくくなる */
+.mark { position: relative; display: inline-flex; }
+.radio { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+
+.markFace {
+  display: grid; place-items: center;
+  /* 指で押せる大きさ。集計表のセルを押させない理由がこれ */
+  min-width: 3rem; min-height: 2.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1.25rem; font-weight: 700;
+}
+.radio:checked + .markFace { border-color: currentColor; border-width: 2px; }
+.radio:focus-visible + .markFace { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.yes { color: var(--yes); }
+.maybe { color: var(--maybe); }
+.no { color: var(--no); }
+
+.error {
+  margin: 0.75rem 0 0; padding: 0.6rem 0.75rem;
+  background: var(--surface-2);
+  border-left: 3px solid var(--no);
+  border-radius: 4px; color: var(--no);
+}
+.ok {
+  margin: 0.75rem 0 0; padding: 0.6rem 0.75rem;
+  background: var(--surface-2);
+  border-left: 3px solid var(--yes);
+  border-radius: 4px; color: var(--yes);
+}
+
+.primary {
+  margin-top: 1.1rem; padding: 0.8rem 1rem;
+  background: var(--accent); color: var(--accent-fg);
+  border: 0; border-radius: 8px;
+  font: inherit; font-size: 1rem; font-weight: 600; cursor: pointer;
+}
+.primary:disabled { opacity: 0.6; cursor: progress; }
+
+.removeRow { margin-top: 0.75rem; }
+.remove {
+  padding: 0.5rem 0.9rem;
+  background: none; color: var(--no);
+  border: 1px solid var(--border); border-radius: 8px;
+  font: inherit; cursor: pointer;
+}

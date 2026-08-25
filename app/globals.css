@@ -1,49 +1,106 @@
+/*
+  配色トークン。値は必ずリテラルな hex で書く。
+  scripts/check-contrast.mjs が CSS をテキストとして読んで解析するので、
+  oklch() や color-mix()、var() の間接参照にすると黙って検査をすり抜ける。
+
+  既定は OS の設定（prefers-color-scheme）に従う。手動で切り替えたときだけ
+  Cookie に入れて data-theme で上書きする。インラインスクリプトを使わないので
+  ちらつきが出ない。
+*/
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --bg: #f4f6f7;
+  --surface: #ffffff;
+  --surface-2: #eceff1;
+  --fg: #1a1e21;
+  --fg-dim: #56606a;
+  --accent: #0a6357;
+  --accent-fg: #ffffff;
+  --yes: #0a6b3d;
+  --maybe: #7a5300;
+  --no: #b02a21;
+  --border: #d3dade;
 }
 
+/* ダークの値はこの下の2か所にある。片方だけ変えるとズレるので、
+   check-contrast.mjs が「2つが一致すること」も検査している。 */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #14181b;
+    --surface: #1c2226;
+    --surface-2: #252d32;
+    --fg: #e2e8ec;
+    --fg-dim: #9fadb6;
+    --accent: #5fd3bd;
+    --accent-fg: #10201d;
+    --yes: #57d08a;
+    --maybe: #e0b355;
+    --no: #ff8a80;
+    --border: #38434a;
   }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #14181b;
+  --surface: #1c2226;
+  --surface-2: #252d32;
+  --fg: #e2e8ec;
+  --fg-dim: #9fadb6;
+  --accent: #5fd3bd;
+  --accent-fg: #10201d;
+  --yes: #57d08a;
+  --maybe: #e0b355;
+  --no: #ff8a80;
+  --border: #38434a;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 html {
-  height: 100%;
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+  /* iOS で入力欄にフォーカスしたとき勝手に拡大されないように */
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  /* Web フォントは読み込まない。外部リクエストを増やさず、表示も速い */
+  font-family:
+    system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Noto Sans JP",
+    "Yu Gothic", sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+  color: var(--accent);
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+:where(a, button, input, textarea, summary):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.wrap {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

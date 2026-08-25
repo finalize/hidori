@@ -1,0 +1,5 @@
+.title { font-size: 1.6rem; margin: 1rem 0 0.5rem; }
+.lead { margin: 0 0 1.5rem; color: var(--fg-dim); }
+.h2 { font-size: 1.05rem; margin: 1.75rem 0 0.5rem; }
+.list { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.4rem; }
+.back { margin-top: 2.5rem; }

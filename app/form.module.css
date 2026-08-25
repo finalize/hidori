@@ -1,0 +1,68 @@
+.form {
+  display: grid;
+  gap: 0.35rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.label {
+  font-weight: 600;
+  margin-top: 0.75rem;
+}
+
+.label:first-of-type {
+  margin-top: 0;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  background: var(--surface);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  /* 16px を下回ると iOS が入力時に拡大する */
+  font: inherit;
+  font-size: 1rem;
+}
+
+.textarea {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.hint {
+  margin: 0.15rem 0 0;
+  color: var(--fg-dim);
+  font-size: 0.875rem;
+}
+
+.error {
+  margin: 0.5rem 0 0;
+  padding: 0.6rem 0.75rem;
+  background: var(--surface-2);
+  border-left: 3px solid var(--no);
+  border-radius: 4px;
+  color: var(--no);
+}
+
+.primary {
+  margin-top: 1.25rem;
+  padding: 0.8rem 1rem;
+  background: var(--accent);
+  color: var(--accent-fg);
+  border: 0;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primary:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}

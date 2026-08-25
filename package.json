@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "check": "tsc --noEmit && eslint && node scripts/check-contrast.mjs",
+    "check": "next typegen && tsc --noEmit && eslint && node scripts/check-contrast.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "ship": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
