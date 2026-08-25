@@ -131,6 +131,23 @@
   box-sizing: border-box;
 }
 
+/*
+  preflight を読み込んでいないので、ボタンにブラウザ既定の灰色の背景が残る。
+  shadcn のコンポーネントは背景を Tailwind のユーティリティで付ける前提なので、
+  付けていない状態のボタン（カレンダーの日付など）が灰色の板に見えてしまう。
+  自前のボタンはすべて background を明示しているので、ここで透明に倒してよい。
+  preflight のうち、実際に要るのはこの1行だけだった。
+
+  **@layer base の中に置くこと。** レイヤーの外に書くと Tailwind の
+  @layer utilities より強くなり、選択中の日に付く bg-primary まで打ち消してしまう。
+  実際に一度そうなって、選ばれた日が「白地に白文字」で消えた。
+*/
+@layer base {
+  button {
+    background-color: transparent;
+  }
+}
+
 html {
   /* iOS で入力欄にフォーカスしたとき勝手に拡大されないように */
   -webkit-text-size-adjust: 100%;
