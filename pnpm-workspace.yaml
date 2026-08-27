@@ -1,3 +1,5 @@
 # wrangler は workerd をインストール時にビルドする。pnpm 10 は既定でスクリプトを止めるので明示する
 allowBuilds:
   workerd: true
+  # アイコン生成に使う（scripts/generate-icons.mjs）。アプリ本体からは読み込まない
+  sharp: true

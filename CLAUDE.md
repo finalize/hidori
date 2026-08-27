@@ -16,6 +16,7 @@ URL を配るだけで日程を決める道具。Next.js 16（App Router）を O
 | デプロイ | `pnpm run ship` |
 | マイグレーション（手元 / 本番） | `pnpm run db:local` / `pnpm run db:remote` |
 | バインディングの型を作り直す | `pnpm run cf-typegen`（`wrangler.jsonc` を変えたら必ず） |
+| ファビコンの再生成 | `pnpm run icons` |
 
 - **`deploy` という script 名は pnpm の組み込みと衝突して実行されない。** デプロイは `ship`。
 - 通常のデプロイは main への push で GitHub Actions が行う。デプロイ前にマイグレーションを当てている。
@@ -105,6 +106,19 @@ migrations/            手書きの SQL
 - 広い画面は表、狭い画面は候補ごとのカード。境目は 46rem。
 - **切り替えのメディアクエリは CSS の末尾に置く。** 途中に書くと、あとから出てくる同じ詳細度の
   指定に上書きされて、広い画面で表とカードが両方出る（実際に一度そうなった）。
+
+## ファビコン
+
+`scripts/generate-icons.mjs` が SVG から `app/icon.svg` / `icon.png` / `apple-icon.png` /
+`favicon.ico` を作る。図柄は「○」で、このアプリで押してもらう記号そのもの。
+色を変えるときはスクリプトの `MARK` を `--accent` と揃えて再実行する。
+
+- 置き場所は `app/` 直下。App Router がファイル名で拾って `<link rel="icon">` を出すので、
+  `public/` には置かないし、レイアウトに手で書く必要もない。
+- **アイコンを差し替えたら `.next` を消してからビルドすること。**
+  `<link>` の内容がビルドキャッシュに残り、古い `sizes` のまま出る。
+  実際に一度、差し替えたのに `sizes="256x256"`（Next の既定アイコンの値）のまま公開された。
+- sharp は ICO を書けないので、`favicon.ico` は PNG に22バイトのヘッダを付けて作っている。
 
 ## Next.js 16 で引っかかったこと
 
