@@ -16,7 +16,7 @@ URL を配るだけで日程を決める道具。Next.js 16（App Router）を O
 | デプロイ | `pnpm run ship` |
 | マイグレーション（手元 / 本番） | `pnpm run db:local` / `pnpm run db:remote` |
 | バインディングの型を作り直す | `pnpm run cf-typegen`（`wrangler.jsonc` を変えたら必ず） |
-| ファビコンの再生成 | `pnpm run icons` |
+| ファビコン・OGP 画像の再生成 | `pnpm run images` |
 
 - **`deploy` という script 名は pnpm の組み込みと衝突して実行されない。** デプロイは `ship`。
 - 通常のデプロイは main への push で GitHub Actions が行う。デプロイ前にマイグレーションを当てている。
@@ -107,10 +107,10 @@ migrations/            手書きの SQL
 - **切り替えのメディアクエリは CSS の末尾に置く。** 途中に書くと、あとから出てくる同じ詳細度の
   指定に上書きされて、広い画面で表とカードが両方出る（実際に一度そうなった）。
 
-## ファビコン
+## ファビコンと OGP 画像
 
-`scripts/generate-icons.mjs` が SVG から `app/icon.svg` / `icon.png` / `apple-icon.png` /
-`favicon.ico` を作る。図柄は「○」で、このアプリで押してもらう記号そのもの。
+`scripts/generate-images.mjs` が SVG から `app/icon.svg` / `icon.png` / `apple-icon.png` /
+`favicon.ico` と `public/og.png` を作る。ファビコンの図柄は「○」で、このアプリで押してもらう記号そのもの。
 色を変えるときはスクリプトの `MARK` を `--accent` と揃えて再実行する。
 
 - 置き場所は `app/` 直下。App Router がファイル名で拾って `<link rel="icon">` を出すので、
@@ -119,6 +119,11 @@ migrations/            手書きの SQL
   `<link>` の内容がビルドキャッシュに残り、古い `sizes` のまま出る。
   実際に一度、差し替えたのに `sizes="256x256"`（Next の既定アイコンの値）のまま公開された。
 - sharp は ICO を書けないので、`favicon.ico` は PNG に22バイトのヘッダを付けて作っている。
+- **OGP 画像に実物のスクリーンショットを使わない。** 白地に細い記号なので、縮小にも
+  マス目への変換にも耐えない（portfolio のサムネイルを作るときに実測して分かった）。
+  大きく・平らで・色の差がはっきりした図柄にすること。
+- OGP の絶対 URL は `lib/site.ts` の `SITE_URL`。共有 URL（`lib/origin.ts`）はヘッダから取るが、
+  メタデータはリクエストの外で決まるのでここだけ固定値が要る。
 
 ## Next.js 16 で引っかかったこと
 
