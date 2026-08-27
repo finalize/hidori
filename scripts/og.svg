@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#ffffff"/>
+  <rect width="470" height="630" fill="#0a6357"/>
+  <text x="64" y="286" font-family="system-ui, -apple-system, 'Hiragino Sans', 'Noto Sans JP', sans-serif" font-size="86" font-weight="700" fill="#ffffff">hidori</text>
+  <text x="66" y="344" font-family="system-ui, -apple-system, 'Hiragino Sans', 'Noto Sans JP', sans-serif" font-size="30" fill="#ffffff" opacity="0.92">URL を配るだけで</text>
+  <text x="66" y="388" font-family="system-ui, -apple-system, 'Hiragino Sans', 'Noto Sans JP', sans-serif" font-size="30" fill="#ffffff" opacity="0.92">日取りが決まります</text>
+  <rect x="530" y="128" width="610" height="104" rx="16" fill="#f4f6f7"/>
+      <rect x="558" y="168" width="86" height="24" rx="12" fill="#d3dade"/>
+      <circle cx="690" cy="180" r="26" fill="none" stroke="#0a6b3d" stroke-width="10"/><circle cx="818" cy="180" r="26" fill="none" stroke="#0a6b3d" stroke-width="10"/><circle cx="946" cy="180" r="26" fill="none" stroke="#0a6b3d" stroke-width="10"/><path d="M 1074 147.45 L 1105 204.4125 L 1043 204.4125 Z" fill="none" stroke="#7a5300" stroke-width="10" stroke-linejoin="round"/><rect x="530" y="260" width="610" height="104" rx="16" fill="#f4f6f7"/>
+      <rect x="558" y="300" width="86" height="24" rx="12" fill="#d3dade"/>
+      <circle cx="690" cy="312" r="26" fill="none" stroke="#0a6b3d" stroke-width="10"/><g stroke="#b02a21" stroke-width="10" stroke-linecap="round">
+      <line x1="793.2" y1="287.2" x2="842.8" y2="336.8"/>
+      <line x1="842.8" y1="287.2" x2="793.2" y2="336.8"/>
+    </g><path d="M 946 279.45 L 977 336.4125 L 915 336.4125 Z" fill="none" stroke="#7a5300" stroke-width="10" stroke-linejoin="round"/><circle cx="1074" cy="312" r="26" fill="none" stroke="#0a6b3d" stroke-width="10"/><rect x="530" y="392" width="610" height="104" rx="16" fill="#f4f6f7"/>
+      <rect x="558" y="432" width="86" height="24" rx="12" fill="#d3dade"/>
+      <path d="M 690 411.45 L 721 468.4125 L 659 468.4125 Z" fill="none" stroke="#7a5300" stroke-width="10" stroke-linejoin="round"/><circle cx="818" cy="444" r="26" fill="none" stroke="#0a6b3d" stroke-width="10"/><g stroke="#b02a21" stroke-width="10" stroke-linecap="round">
+      <line x1="921.2" y1="419.2" x2="970.8" y2="468.8"/>
+      <line x1="970.8" y1="419.2" x2="921.2" y2="468.8"/>
+    </g><circle cx="1074" cy="444" r="26" fill="none" stroke="#0a6b3d" stroke-width="10"/>
+</svg>
