@@ -22,8 +22,8 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
-    "lucide-react": "^1.44.0",
-    "next": "16.3.4",
+    "lucide-react": "^1.45.0",
+    "next": "16.3.5",
     "react": "19.3.0",
     "react-day-picker": "^10.0.1",
     "react-dom": "19.3.0",
@@ -39,12 +39,12 @@
     "@types/react-dom": "^19",
     "contrast-kit": "^0.3.0",
     "eslint": "^9",
-    "eslint-config-next": "16.3.4",
+    "eslint-config-next": "16.3.5",
     "postcss": "^8.5.28",
     "sharp": "^0.35.4",
     "tailwindcss": "^4.3.3",
     "typescript": "^5",
-    "wrangler": "^4.131.0"
+    "wrangler": "^4.131.1"
   },
   "packageManager": "pnpm@10.30.1",
   "engines": {
