@@ -13,7 +13,7 @@ importers:
         version: 1.8.0(@date-fns/tz@1.5.0)(@types/react@19.3.0)(date-fns@4.4.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@opennextjs/cloudflare':
         specifier: ^1.20.6
-        version: 1.20.6(next@16.3.6(@babel/core@7.29.7)(@types/node@26.6.3)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(wrangler@4.142.0(@types/node@26.6.3))
+        version: 1.20.6(next@16.3.6(@babel/core@7.29.7)(@types/node@26.6.3)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(wrangler@4.143.0(@types/node@26.6.3))
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -85,8 +85,8 @@ importers:
         specifier: ^6
         version: 6.0.3
       wrangler:
-        specifier: ^4.142.0
-        version: 4.142.0(@types/node@26.6.3)
+        specifier: ^4.143.0
+        version: 4.143.0(@types/node@26.6.3)
 
 packages:
 
@@ -4232,8 +4232,8 @@ packages:
     engines: {node: '>=16'}
     hasBin: true
 
-  wrangler@4.142.0:
-    resolution: {integrity: sha512-oqquqqtHOevn17hzI7qRzU+MiOaCU2UZRLPIZStjGlhwYbxe3hk4Stq3knfcIlGfMSfgM4iycZKeb1fEF5mRTQ==}
+  wrangler@4.143.0:
+    resolution: {integrity: sha512-c2lHXVr1uDzqrHLdB07zGloUI+AoCBPa06fk+JMrX5TfoydISdhfVAR1IK1Ry2eu2RJmsMsGJY3vJNykJWik2Q==}
     engines: {node: '>=22.0.0'}
     hasBin: true
     peerDependencies:
@@ -5805,7 +5805,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@opennextjs/cloudflare@1.20.6(next@16.3.6(@babel/core@7.29.7)(@types/node@26.6.3)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(wrangler@4.142.0(@types/node@26.6.3))':
+  '@opennextjs/cloudflare@1.20.6(next@16.3.6(@babel/core@7.29.7)(@types/node@26.6.3)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(wrangler@4.143.0(@types/node@26.6.3))':
     dependencies:
       '@ast-grep/napi': 0.40.5
       '@dotenvx/dotenvx': 1.31.0
@@ -5817,7 +5817,7 @@ snapshots:
       glob: 12.0.0
       next: 16.3.6(@babel/core@7.29.7)(@types/node@26.6.3)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       ts-tqdm: 0.8.6
-      wrangler: 4.142.0(@types/node@26.6.3)
+      wrangler: 4.143.0(@types/node@26.6.3)
       yargs: 18.1.0
     transitivePeerDependencies:
       - encoding
@@ -8928,7 +8928,7 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20260926.1
       '@cloudflare/workerd-windows-64': 1.20260926.1
 
-  wrangler@4.142.0(@types/node@26.6.3):
+  wrangler@4.143.0(@types/node@26.6.3):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.5.0
       '@cloudflare/unenv-preset': 2.16.2(unenv@2.0.0-rc.24)(workerd@1.20260926.1)
