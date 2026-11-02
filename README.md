@@ -2,7 +2,7 @@
 
 URL を配るだけで日程を決められます。登録は要りません。
 
-**https://hidori.shgysd.workers.dev**
+いまは公開していません（2026-11-02 に止めました）。
 
 ## 調整さんと違うところ
 
@@ -37,8 +37,8 @@ pnpm dev
 
 `pnpm check` で型・lint・配色を検査します。`pnpm preview` は本番と同じ Worker で動かします。
 
-デプロイは main への push で自動的に行われます（`CLOUDFLARE_API_TOKEN` と `CLOUDFLARE_ACCOUNT_ID`
-が設定されている場合。未設定ならスキップされて CI は落ちません）。
+CI は検査とビルドだけを行い、デプロイはしません。また出すときは D1 のデータベースを作り直して
+`wrangler.jsonc` の `database_id` を書き換え、`pnpm run db:remote` のあとに `pnpm run ship` を流します。
 
 ## ライセンス
 
