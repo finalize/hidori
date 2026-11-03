@@ -18,11 +18,11 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
-    "@opennextjs/cloudflare": "^1.20.14",
+    "@opennextjs/cloudflare": "^1.20.15",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
-    "lucide-react": "^1.64.0",
+    "lucide-react": "^1.65.0",
     "next": "16.4.3",
     "react": "19.3.1",
     "react-day-picker": "^10.0.2",
