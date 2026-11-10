@@ -19,7 +19,9 @@ URL を配るだけで日程を決める道具。Next.js 16（App Router）を O
 | ファビコン・OGP 画像の再生成 | `pnpm run images` |
 
 - **`deploy` という script 名は pnpm の組み込みと衝突して実行されない。** デプロイは `ship`。
-- 通常のデプロイは main への push で GitHub Actions が行う。デプロイ前にマイグレーションを当てている。
+- CI は検査とビルドだけで、デプロイはしない。2026-11-02 に公開を止め、Cloudflare の Worker と D1（`hidori`）を消した。
+  依存の自動更新（Dependabot と自動マージ）も止めた。また出すときは D1 を作り直して `wrangler.jsonc` の `database_id` を書き換え、
+  `pnpm run db:remote` のあとに `pnpm run ship`。
 
 ## 構成
 
